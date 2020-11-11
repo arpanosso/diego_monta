@@ -375,32 +375,66 @@ summary {
 </div>
 
 
-<pre class="r"><code># An?lise de Lodo com o experimento de Diego - Monta e Thiago
-require(lattice)</code></pre>
-<pre><code>## Loading required package: lattice</code></pre>
-<pre class="r"><code>require(latticeExtra)</code></pre>
-<pre><code>## Loading required package: latticeExtra</code></pre>
-<pre class="r"><code>require(agricolae)</code></pre>
-<pre><code>## Loading required package: agricolae</code></pre>
-<pre class="r"><code>require(ExpDes.pt)</code></pre>
-<pre><code>## Loading required package: ExpDes.pt</code></pre>
-<pre><code>## 
-## Attaching package: &#39;ExpDes.pt&#39;</code></pre>
-<pre><code>## The following objects are masked from &#39;package:agricolae&#39;:
-## 
-##     lastC, order.group, tapply.stat</code></pre>
-<pre><code>## The following object is masked from &#39;package:stats&#39;:
-## 
-##     ccf</code></pre>
+<div id="análise-de-lodo-com-o-experimento-de-diego---monta-e-thiago" class="section level1">
+<h1>Análise de Lodo com o experimento de Diego - Monta e Thiago</h1>
+<div id="carregando-os-pacotes" class="section level2">
+<h2>Carregando os Pacotes</h2>
+<pre class="r"><code>library(lattice)
+library(latticeExtra)
+library(agricolae)
+library(ExpDes.pt)</code></pre>
+</div>
+<div id="lendo-o-banco-de-dados-antigo" class="section level2">
+<h2>Lendo o banco de dados antigo</h2>
 <pre class="r"><code>dd&lt;-read.table(&quot;https://raw.githubusercontent.com/arpanosso/diego_monta/main/dados/LodoDiegoMonta.txt&quot;,h=T,sep=&quot;\t&quot;)
-dp&lt;-read.table(&quot;https://raw.githubusercontent.com/arpanosso/diego_monta/main/dados/LodoDiegoMontaPR.txt&quot;,h=T,sep=&quot;\t&quot;)
-dET&lt;-read.table(&quot;https://raw.githubusercontent.com/arpanosso/diego_monta/main/dados/LodoDiegoMontaET.txt&quot;,h=T,sep=&quot;\t&quot;)
-names(dp)</code></pre>
-<pre><code>## [1] &quot;Dose&quot;          &quot;Bloco&quot;         &quot;Produtividade&quot;</code></pre>
-<pre class="r"><code># dET$ET[dET$ET&gt;6]&lt;-c(2.5,2)
-# EMiss?o total (MG ha-1)
-
-tx&lt;-xtabs(ET~Dose,data=dET)
+head(dd)</code></pre>
+<pre><code>##   DOSE REP      Prof      MACRO     MICRO        PT       DS
+## 1    0   1 0.00-0.05 0.15046447 0.2552871 0.4057516 1.413361
+## 2    0   1 0.05-0.10 0.08876752 0.2605530 0.3493205 1.576780
+## 3    0   1 0.10-0.20 0.09655233 0.2536947 0.3502471 1.586257
+## 4   10   1 0.00-0.05 0.11997889 0.2499441 0.3699230 1.456581
+## 5   10   1 0.05-0.10 0.10672670 0.2562277 0.3629544 1.518696
+## 6   10   1 0.10-0.20 0.08012412 0.2658153 0.3459394 1.633829</code></pre>
+<pre class="r"><code>dp&lt;-read.table(&quot;https://raw.githubusercontent.com/arpanosso/diego_monta/main/dados/LodoDiegoMontaPR.txt&quot;,h=T,sep=&quot;\t&quot;)
+head(dp)</code></pre>
+<pre><code>##          Dose Bloco Produtividade
+## 1           0     1        4492.8
+## 2           0     2        4292.9
+## 3           0     3        4087.5
+## 4           0     4        3970.2
+## 5 Ad. Mineral     1        4389.3
+## 6 Ad. Mineral     2        4621.7</code></pre>
+<pre class="r"><code>dET&lt;-read.table(&quot;https://raw.githubusercontent.com/arpanosso/diego_monta/main/dados/LodoDiegoMontaET.txt&quot;,h=T,sep=&quot;\t&quot;)
+head(dET)</code></pre>
+<pre><code>##   Dose Bloco Rep       ET
+## 1    0     1   1 1.395187
+## 2    0     1   2 1.265743
+## 3    0     1   3 1.151885
+## 4    0     2   1 1.596292
+## 5    0     2   2 2.285712
+## 6    0     2   3 1.221264</code></pre>
+</div>
+<div id="lendo-o-banco-de-dados-novos" class="section level2">
+<h2>Lendo o banco de dados NOVOS</h2>
+<pre class="r"><code>fert&lt;-read.table(&quot;https://raw.githubusercontent.com/arpanosso/diego_monta/main/dados/Fertilidade_nov_2020.txt&quot;,h=TRUE,sep=&quot;\t&quot;)
+head(fert)</code></pre>
+<pre><code>##   DOSE REP  Ano      Prof Presina MO  pH   K Ca Mg HAl   SB  CTC  V
+## 1    0   1 2018 0.00-0.05      21 22 5.8 1.9 36 17  20 54.9 74.9 73
+## 2    0   1 2018 0.05-0.10      17 22 5.8 1.3 35 18  20 54.3 74.3 73
+## 3    0   1 2018 0.10-0.20      14 21 4.9 0.8 19 12  28 31.8 59.8 53
+## 4    0   1 2018 0.20-0.40       8 20 5.2 0.9 23 14  28 37.4 65.4 57
+## 5    0   2 2018 0.00-0.05      21 24 5.7 2.2 32 20  20 54.2 74.2 73
+## 6    0   2 2018 0.05-0.10      19 21 5.5 1.5 26 17  25 44.5 69.5 64</code></pre>
+<pre class="r"><code>fisica&lt;-read.table(&quot;https://raw.githubusercontent.com/arpanosso/diego_monta/main/dados/Fisica_nov_2020.txt&quot;,h=TRUE,sep=&quot;\t&quot;)
+head(fisica)</code></pre>
+<pre><code>##   DOSE REP  Ano      Prof MACRO MICRO   PT   DS DMP  IEA DMG AGRI
+## 1    0   1 2018 0.00-0.05  0.03  0.31 0.34 1.61 1.0 27.6 0.2  8.8
+## 2    0   1 2018 0.05-0.10  0.07  0.28 0.35 1.64 0.6 54.4 0.3  4.0
+## 3    0   1 2018 0.10-0.20  0.07  0.26 0.33 1.67 0.6 56.0 0.3  3.9
+## 4    0   2 2018 0.00-0.05  0.14  0.24 0.37 1.45 0.7 62.7 0.4  6.1
+## 5    0   2 2018 0.05-0.10  0.11  0.24 0.35 1.48 0.7 73.0 0.4  2.1
+## 6    0   2 2018 0.10-0.20  0.11  0.24 0.35 1.62 0.6 56.3 0.3  3.7</code></pre>
+<pre class="r"><code>tx&lt;-xtabs(ET~Dose,data=dET)
 tm&lt;-tx/(4*3)
 tm</code></pre>
 <pre><code>## Dose
@@ -564,6 +598,8 @@ names(dd)</code></pre>
 # contrasts(tratC)&lt;-mc
 # mod&lt;-aov(y~tratC)
 # print(summary.lm(mod))</code></pre>
+</div>
+</div>
 
 
 

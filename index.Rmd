@@ -2,25 +2,40 @@
 title: "ANOVA - Diego_Montanari"
 output: html_document
 ---
+# Análise de Lodo com o experimento de Diego - Monta e Thiago
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+## Carregando os Pacotes
+```{r message=FALSE}
+library(lattice)
+library(latticeExtra)
+library(agricolae)
+library(ExpDes.pt)
 ```
 
+## Lendo o banco de dados antigo
 ```{r}
-# An?lise de Lodo com o experimento de Diego - Monta e Thiago
-require(lattice)
-require(latticeExtra)
-require(agricolae)
-require(ExpDes.pt)
-
 dd<-read.table("https://raw.githubusercontent.com/arpanosso/diego_monta/main/dados/LodoDiegoMonta.txt",h=T,sep="\t")
-dp<-read.table("https://raw.githubusercontent.com/arpanosso/diego_monta/main/dados/LodoDiegoMontaPR.txt",h=T,sep="\t")
-dET<-read.table("https://raw.githubusercontent.com/arpanosso/diego_monta/main/dados/LodoDiegoMontaET.txt",h=T,sep="\t")
-names(dp)
-# dET$ET[dET$ET>6]<-c(2.5,2)
-# EMiss?o total (MG ha-1)
+head(dd)
 
+dp<-read.table("https://raw.githubusercontent.com/arpanosso/diego_monta/main/dados/LodoDiegoMontaPR.txt",h=T,sep="\t")
+head(dp)
+
+dET<-read.table("https://raw.githubusercontent.com/arpanosso/diego_monta/main/dados/LodoDiegoMontaET.txt",h=T,sep="\t")
+head(dET)
+```
+
+## Lendo o banco de dados NOVOS
+
+```{r}
+fert<-read.table("https://raw.githubusercontent.com/arpanosso/diego_monta/main/dados/Fertilidade_nov_2020.txt",h=TRUE,sep="\t")
+head(fert)
+
+fisica<-read.table("https://raw.githubusercontent.com/arpanosso/diego_monta/main/dados/Fisica_nov_2020.txt",h=TRUE,sep="\t")
+head(fisica)
+```
+
+
+```{r}
 tx<-xtabs(ET~Dose,data=dET)
 tm<-tx/(4*3)
 tm
