@@ -124,9 +124,11 @@ barchart(tm,sta=F,auto.key=list(title="Profundidade (m)",column=3),
   layer({
     panel.abline(h=seq(0.2,.45,by=0.05),lty=2,col="gray50")
   },under=TRUE)
+```
 
 
-# An?lise de Vari?ncia
+```{r}
+# Análise de Vari?ncia
 prof<-levels(dd$Prof)
 names(dd)
 
@@ -199,8 +201,241 @@ names(dd)
 # mod<-aov(y~tratC)
 # print(summary.lm(mod))
 
+```
 
+# NOVA ANÁLISE - Física do solo por Ano
 
+```{r}
+prof<-levels(as.factor(fisica$Prof))
+for(k in 2018:2019){
+  for(j in 5:length(fisica)){
+    for(i in 1:3){
+     print("========================================")
+     print(paste("ANO:",k,"Variável: ",names(fisica[j]),"Prof.: ",prof[i]))
+     print("=========================================")
+     f<-fisica$Prof==prof[i] & fisica$Ano ==k
+     trat<-fisica$DOSE[f]
+     bloco<-fisica$REP[f]
+     y<-fisica[f,j]
+     print("------------- Análise DBC ---------------")
+     (dbc(trat,bloco,y))
+     cat("\n")
+  
+     
+     print("------- Análise Desdobramento Contrastes---------")
+     trat<-as.factor(trat)
+     mc<-matrix(c(0,-2,2,-1,1,
+                  -1,-1,-1,2,-4,
+                  -1,0,-2,0,6,
+                  -1,1,-1,-2,-4,
+                  -1,2,2,1,1,
+                  4,0,0,0,0),ncol=5,byrow = T)
+     colnames(mc)<-c("ADxDO","Lin","Qua","Cub","4Ordem")
+     mc
+     tratC<-trat
+     contrasts(tratC)<-mc
+     mod<-aov(y~tratC)
+     print("------------- Análise de Contrastes --------------")
+     print(summary.lm(mod))
+     cat("\n")
+     }
+  }
+}
 
 ```
+
+
+
+# NOVA ANÁLISE - Física do solo
+```{r}
+prof<-levels(as.factor(fisica$Prof))
+  for(j in 5:length(fisica)){
+    for(i in 1:3){
+     print("========================================")
+     print(paste("Variável: ",names(fisica[j]),"Prof.: ",prof[i]))
+     print("=========================================")
+     f<-fisica$Prof==prof[i]
+     dose<-fisica$DOSE[f]
+     ano<-fisica$Ano[f]
+     trat<-paste(ano,dose,sep="_")
+     trat<-as.factor(trat)
+     bloco<-fisica$REP[f]
+     y<-fisica[f,j]
+     print("------------- Análise DBC ---------------")
+     (psub2.dbc(dose,ano,bloco,y,fac.names=c("Dose","Ano")))
+     cat("\n")
+  
+     
+     print("------- Análise Desdobramento Contrastes---------")
+     trat<-as.factor(trat)
+     contrasts(trat)
+     mc<-matrix(c(-1,-2,2,-1,1,0,0,0,0,0,0,
+                  -1,-1,-1,2,-4,0,0,0,0,0,0,
+                  -1,0,-2,0,6,0,0,0,0,0,0,
+                  -1,1,-1,-2,-4,0,0,0,0,0,0,
+                  -1,2,2,1,1,0,0,0,0,0,0,
+                  5,0,0,0,0,0,0,0,0,0,0,
+                  0,0,0,0,0,-1,-2,2,-1,1,0,
+                  0,0,0,0,0,-1,-1,-1,2,-4,0,
+                  0,0,0,0,0,-1,0,-2,0,6,0,
+                  0,0,0,0,0,-1,1,-1,-2,-4,0,
+                  0,0,0,0,0,-1,2,2,1,1,0,
+                  0,0,0,0,0,5,0,0,0,0,1
+),ncol=11,byrow = T)
+     colnames(mc)<-c("ADxDO_2018",
+                     "Lin_2018",
+                     "Qua_2018",
+                     "Cub_2018",
+                     "4Ordem_2018",
+                     "ADxDO_2019",
+                     "Lin_2019",
+                     "Qua_2019",
+                     "Cub_2019",
+                     "4Ordem_2019",
+                     "SemEfito")
+     mc
+     tratC<-trat
+     contrasts(tratC)<-mc
+     mod<-aov(y~tratC)
+     print("------------- Análise de Contrastes --------------")
+     
+     print(summary(mod, 
+        split= list(tratC= 
+                      list("ADxDO_2018"=1,
+                           "Lin_2018"=2,
+                           "Qua_2018"=3,
+                           "Cub_2018"=4,
+                           "4Ordem_2018"= 5,
+                           "ADxDO_2019"=6,
+                           "Lin_2019"=7,
+                           "Qua_2019"=8,
+                           "Cub_2019"=9,
+                           "4Ordem_2019"= 10,
+                           "SemEfeito" = 11)))
+        )
+     
+     
+     cat("\n")
+     }
+  }
+```
+
+
+# NOVA ANÁLISE - FERTILIDADE do solo por Ano
+
+```{r}
+prof<-levels(as.factor(fert$Prof))
+for(k in 2018:2019){
+  for(j in 5:length(fert)){
+    for(i in 1:4){
+     print("========================================")
+     print(paste("ANO:",k,"Variável: ",names(fert[j]),"Prof.: ",prof[i]))
+     print("=========================================")
+     f<-fert$Prof==prof[i] & fert$Ano ==k
+     trat<-fert$DOSE[f]
+     bloco<-fert$REP[f]
+     y<-fert[f,j]
+     print("------------- Análise DBC ---------------")
+     (dbc(trat,bloco,y))
+     cat("\n")
+  
+     
+     print("------- Análise Desdobramento Contrastes---------")
+     trat<-as.factor(trat)
+     mc<-matrix(c(0,-2,2,-1,1,
+                  -1,-1,-1,2,-4,
+                  -1,0,-2,0,6,
+                  -1,1,-1,-2,-4,
+                  -1,2,2,1,1,
+                  4,0,0,0,0),ncol=5,byrow = T)
+     colnames(mc)<-c("ADxDO","Lin","Qua","Cub","4Ordem")
+     mc
+     tratC<-trat
+     contrasts(tratC)<-mc
+     mod<-aov(y~tratC)
+     print("------------- Análise de Contrastes --------------")
+     print(summary.lm(mod))
+     cat("\n")
+     }
+  }
+}
+
+```
+
+
+
+# NOVA ANÁLISE - FERTILIDADE do solo
+```{r}
+prof<-levels(as.factor(fert$Prof))
+  for(j in 5:length(fert)){
+    for(i in 1:4){
+     print("========================================")
+     print(paste("Variável: ",names(fert[j]),"Prof.: ",prof[i]))
+     print("=========================================")
+     f<-fert$Prof==prof[i]
+     dose<-fert$DOSE[f]
+     ano<-fert$Ano[f]
+     trat<-paste(ano,dose,sep="_")
+     trat<-as.factor(trat)
+     bloco<-fert$REP[f]
+     y<-fert[f,j]
+     print("------------- Análise DBC ---------------")
+     (psub2.dbc(dose,ano,bloco,y,fac.names=c("Dose","Ano")))
+     cat("\n")
+  
+     
+     print("------- Análise Desdobramento Contrastes---------")
+     trat<-as.factor(trat)
+     contrasts(trat)
+     mc<-matrix(c(-1,-2,2,-1,1,0,0,0,0,0,0,
+                  -1,-1,-1,2,-4,0,0,0,0,0,0,
+                  -1,0,-2,0,6,0,0,0,0,0,0,
+                  -1,1,-1,-2,-4,0,0,0,0,0,0,
+                  -1,2,2,1,1,0,0,0,0,0,0,
+                  5,0,0,0,0,0,0,0,0,0,0,
+                  0,0,0,0,0,-1,-2,2,-1,1,0,
+                  0,0,0,0,0,-1,-1,-1,2,-4,0,
+                  0,0,0,0,0,-1,0,-2,0,6,0,
+                  0,0,0,0,0,-1,1,-1,-2,-4,0,
+                  0,0,0,0,0,-1,2,2,1,1,0,
+                  0,0,0,0,0,5,0,0,0,0,1
+),ncol=11,byrow = T)
+     colnames(mc)<-c("ADxDO_2018",
+                     "Lin_2018",
+                     "Qua_2018",
+                     "Cub_2018",
+                     "4Ordem_2018",
+                     "ADxDO_2019",
+                     "Lin_2019",
+                     "Qua_2019",
+                     "Cub_2019",
+                     "4Ordem_2019",
+                     "SemEfito")
+     mc
+     tratC<-trat
+     contrasts(tratC)<-mc
+     mod<-aov(y~tratC)
+     print("------------- Análise de Contrastes --------------")
+     
+     print(summary(mod, 
+        split= list(tratC= 
+                      list("ADxDO_2018"=1,
+                           "Lin_2018"=2,
+                           "Qua_2018"=3,
+                           "Cub_2018"=4,
+                           "4Ordem_2018"= 5,
+                           "ADxDO_2019"=6,
+                           "Lin_2019"=7,
+                           "Qua_2019"=8,
+                           "Cub_2019"=9,
+                           "4Ordem_2019"= 10,
+                           "SemEfeito" = 11)))
+        )
+     
+     
+     cat("\n")
+     }
+  }
+```
+
 
